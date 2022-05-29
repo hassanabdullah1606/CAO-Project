@@ -1,14 +1,3 @@
-#include "WiFi.h"
-#include "Adafruit_MQTT.h"
-#include "Adafruit_MQTT_Client.h"
-
-const char* ssid = "Galaxy S20 FEF378";                                                 //Connection Name
-const char* password = "111222333";                                                    //Connection Password
-#define MQTT_SERV "io.adafruit.com"
-#define MQTT_PORT 1883
-#define MQTT_NAME  "hassan_abdullah"                                                // Your Adafruit IO Username
-#define MQTT_PASS "aio_SbVm17OCnbupZLPcjks5QgYR7ole"                               //  Your Adafruit IO AIO key
-
 
 #define SOUND_SPEED 0.034                                                              //Define sound speed in cm/uS
 #define CM_TO_INCH 0.393701                                                           //Convert CM to Inches
@@ -30,18 +19,8 @@ int MAX = 1000;                                                                 
 int MIN = 500;                                                                       //Minimum Water Level
 
 
-WiFiClient client;
-Adafruit_MQTT_Client mqtt(&client, MQTT_SERV, MQTT_PORT, MQTT_NAME, MQTT_PASS);
-Adafruit_MQTT_Publish Water_data = Adafruit_MQTT_Publish(&mqtt, MQTT_NAME "/f/WaterLevel");
-
-
 
 void setup() {
-  Serial.begin(9600);                                                               // Starts the serial communication
-  initWiFi();                                                                         //Call Wifi Function
-  Serial.print("RSSI: ");                                                            // Display RSSI
-  Serial.println(WiFi.RSSI());
-  MQTT_connect();
   pinMode(trigPin, OUTPUT);                                                        // Sets the Trigger Pin as an Output
   pinMode(echoPin, INPUT);                                                        // Sets the Echo Pin as an Input
   pinMode(Relay, OUTPUT);                                                        // Set the Relay pin as output 
@@ -54,7 +33,6 @@ void loop() {
 
    Waterlevel();                                                                    //Call Water Senor Reading Function
    UltraSensor();                                                                  //Call Ultra Sonic Senor Reading Function
-   WIFIRe();                                                                      //Call WIFI Reconnect Function
   if (value < MIN) {                                                              //If water Level decreases the MIN level turn on the pump 
     digitalWrite(Relay, HIGH);
     digitalWrite(LED, HIGH);
@@ -77,7 +55,6 @@ void loop() {
     digitalWrite(LED, LOW);
   }
   delay(2000); 
-  graph();
 }
 
 
@@ -92,6 +69,8 @@ void Waterlevel()                                                               
   Serial.println(value);
 }
 
+
+    
 void UltraSensor() {                                                                 //Funtion to detect Water level
   
   digitalWrite(trigPin, LOW);                                                       // Clear the trigger PIN
@@ -110,54 +89,3 @@ void UltraSensor() {                                                            
   Serial.println(distanceInch);
 }
 
-void initWiFi() {                                                                  //WIFI CONNECTION function
-  WiFi.mode(WIFI_STA);                                                            //Station mode: the ESP32 connects to an access point
-  WiFi.begin(ssid, password);                                                    //Start Connection
-  Serial.print("Connecting to WiFi ..");
-  while (WiFi.status() != WL_CONNECTED) {                                       //Till NOT CONNECTED
-    Serial.print('.');
-    delay(1000);
-  }
-  Serial.println(WiFi.localIP());                                             //Display IP Addess After Connnection
-}
-
-void WIFIRe(){                                                              //To reconnect with WIFI
-  unsigned long currentMillis = millis();                                  //Returns the number of milliseconds that your Arduino board has been powered up
-                                                                          // if WiFi is down, try reconnecting every CHECK_WIFI_TIME seconds
-  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >=interval)) {
-    Serial.print(millis());
-    Serial.println("Reconnecting to WiFi...");
-    WiFi.disconnect();
-    WiFi.reconnect();
-    previousMillis = currentMillis;
-  }
-
-}
-
-void MQTT_connect() {
-  int8_t again;
-  if (mqtt.connected()) {
-    return;
-    }
-  Serial.print("Connecting to Adafruit IO");
-  uint8_t retry = 5;
-  while ((again = mqtt.connect()) != 0) { 
-       Serial.println(mqtt.connectErrorString(again));
-       Serial.println("Retrying Adafruit connection in 5 seconds...");
-       mqtt.disconnect();
-       delay(5000);  
-       retry--;
-       if (retry == 0) {
-         while (1);
-       }
-  }
-  Serial.println("");
-  Serial.println("Adafruit IO is Connected!");
-}
-
-void graph(){
-    if (!Water_data.publish(value))    
-    {                     
-         delay(2000);   
-    }
-}
