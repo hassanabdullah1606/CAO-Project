@@ -92,8 +92,6 @@ void Waterlevel()                                                               
   Serial.println(value);
 }
 
-
-    
 void UltraSensor() {                                                                 //Funtion to detect Water level
   
   digitalWrite(trigPin, LOW);                                                       // Clear the trigger PIN
@@ -122,7 +120,6 @@ void initWiFi() {                                                               
   }
   Serial.println(WiFi.localIP());                                             //Display IP Addess After Connnection
 }
-
 
 void WIFIRe(){                                                              //To reconnect with WIFI
   unsigned long currentMillis = millis();                                  //Returns the number of milliseconds that your Arduino board has been powered up
