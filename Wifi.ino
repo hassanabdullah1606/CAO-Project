@@ -34,8 +34,6 @@ void loop() {
 }
 
 
-
-
 void initWiFi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
