@@ -7,7 +7,7 @@ const char* password = "111222333";                                             
 #define MQTT_SERV "io.adafruit.com"
 #define MQTT_PORT 1883
 #define MQTT_NAME  "hassan_abdullah"                                                // Your Adafruit IO Username
-#define MQTT_PASS "aio_SbVm17OCnbupZLPcjks5QgYR7ole"                               //  Your Adafruit IO AIO key
+#define MQTT_PASS "aio_PHXR011OAGY9UeJuKZjyUsc9yJQN"                               //  Your Adafruit IO AIO key
 
 
 #define SOUND_SPEED 0.034                                                              //Define sound speed in cm/uS
@@ -27,7 +27,7 @@ float distanceInch;
 unsigned long previousMillis = 0;
 unsigned long interval = 10000;
 int MAX = 1000;                                                                       //Maximum Water Level
-int MIN = 500;                                                                       //Minimum Water Level
+int MIN = 600;                                                                       //Minimum Water Level
 
 
 WiFiClient client;
@@ -48,6 +48,7 @@ void setup() {
   pinMode(LED, OUTPUT);                                                         //Set the LED pin as output
   pinMode(POWER_PIN, OUTPUT);                                                  //Set the POWER PIN as OUTPUT
   digitalWrite(POWER_PIN, LOW);                                               //Clear the power pin, Set to Low (not Working)
+  digitalWrite(Relay,LOW);
 }
 
 void loop() {
